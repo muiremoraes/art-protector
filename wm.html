@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+    <a href="#">Add watermark</a>
+    <a href="#">Compare images</a>
+	<a href="#">Scan & Notifications</a>
+	<a href="#">Change settings</a>
+    <a href="#" onclick="logout()">Logout</a>
+</nav>
+
+<section>
+    <h2>Upload Image</h2>
+    <input type="file" id="fileInput"> <!--select image and send it-->
+</section>
+
+<section>
+    <h2>Add Watermark</h2>
+    <input type="text" id="watermark" placeholder="Enter text for watermark">
+    <select id="method">
+        <option value="visible">Visible</option>
+        <option value="stego">Steganography</option>
+        <option value="dct">DCT</option>
+    </select>
+</section>
+
+<section>
+    <button onclick="encodeImage()">Encode</button> 
+    <button onclick="decodeImage()">Decode</button>
+    <button onclick="downloadImage()">Download</button>
+    <p id="message"></p>
+    <p id="decodedMessage"></p> 
+</section>
+
+<section>
+    <h2>Preview</h2> <!--image returns image after upload and displays imag -->
+    <img id="preview" src="">
+</section>
+
+<script>
+const token = localStorage.getItem("token");
+if(!token) window.location.href="login.html"; 
+
+let uploadedFile = null;
+let uploadedFilename = null; //var for upload
+
+document.getElementById("fileInput").addEventListener("change", async (e)=>{ //listens for file than file gets hashed and displayed on scree
+    uploadedFile = e.target.files[0];
+	
+    const formData = new FormData(); //sends file 
+    formData.append("file", uploadedFile);
+	
+    const res = await fetch("http://localhost:5000/upload-image", {
+        method:"POST",
+        body: formData
+    });
+	
+    const data = await res.json(); //returns hashed file
+    uploadedFilename = data.hash + "." + uploadedFile.name.split(".").pop();
+    document.getElementById("preview").src = `http://localhost:5000/images/${uploadedFilename}`; //update preieview with image uploaded
+});
+
+
+
+async function encodeImage(){
+    const watermark = document.getElementById("watermark").value; //get watermark and metod
+    const method = document.getElementById("method").value;
+	
+    if(!uploadedFilename) {alert("upload an image first"); return;} 
+    const res = await fetch(`http://localhost:5000/${method==="visible"?"visible_encode":method==="stego"?"encode_steganography":"dct_encode"}`,{
+        method:"POST", //ffuntcion baased on fucntion selected
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+        },
+        body: JSON.stringify({name: uploadedFilename, watermark})
+    });
+    const data = await res.json();
+    document.getElementById("message").innerText = data.message || data.error;
+}
+
+async function decodeImage(){
+    if(!uploadedFilename) {alert("upload an image first"); return;} //if no file alert pops
+	
+    const method = document.getElementById("method").value; //fucntion based on what selected
+    const res = await fetch(`http://localhost:5000/${method==="stego"?"steganography_decode":"dct_decode"}`,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+        },
+        body: JSON.stringify({name: uploadedFilename})
+    });
+	
+    const data = await res.json();
+	
+    if(data.decoded_watermark){ //if decoded return watermark else return error
+        document.getElementById("decodedMessage").innerText = "Decoded: " + data.decoded_watermark;
+    } else {
+        document.getElementById("decodedMessage").innerText = data.message || data.error;
+    }
+}
+
+async function downloadImage(){ //must upload image
+    if(!uploadedFilename) {alert("Upload an image first"); return;}
+	
+    const res = await fetch("http://localhost:5000/download_image",{ //send to backend to download edited image
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body: JSON.stringify({name: uploadedFilename})
+    });
+	
+    const blob = await res.blob(); //contains file in binary form
+	
+    const url = window.URL.createObjectURL(blob); //convert binary to temp download
+	//hidden anochor tag
+    const link = document.createElement("a"); 
+    link.href = url;
+    link.download = uploadedFilename; //save using hashed name
+    link.click(); //autoclicks link
+    window.URL.revokeObjectURL(url); //clears temp link
+}
+
+function logout(){
+    localStorage.removeItem("token");
+    window.location.href="login.html";
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Register</h1>
+<section>
+    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="registerUser()">Register</button>
+    <button onclick="location.href='login.html'">Login</button>
+    <p id="registerMsg" style="color:red;"></p>
+</section>
+
+<script>
+async function registerUser() {
+    const username = document.getElementById("username").value; //get values
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+	
+    const res = await fetch("http://localhost:5000/register", { //send post request 
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username,email,password})
+    });
+	
+    const data = await res.json(); //send as json
+	
+    if(res.status===201){
+        window.location.href="login.html"; //redirect to login or print message
+    } else {
+        document.getElementById("registerMsg").innerText = data.message;
+    }
+}
+</script>
+</body>
+</html>

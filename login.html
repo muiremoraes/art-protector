@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Login</h1>
+<section>
+    <input type="text" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="loginUser()">Login</button>
+    <button onclick="location.href='register.html'">Register</button>
+    <p id="loginMsg" style="color:red;"></p> <!--show error msg in red-->
+</section>
+
+<script>
+async function loginUser() {
+
+    const email = document.getElementById("email").value; //get values
+    const password = document.getElementById("password").value;
+	
+    const res = await fetch("http://localhost:5000/login", { //send POST request to endpoint
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({email, password})
+    });
+    const data = await res.json();
+	
+    if(res.status===200){ //if 200
+        localStorage.setItem("token", data.token); //store jwt
+        window.location.href="wm.html";
+    } else {
+        document.getElementById("loginMsg").innerText = data.message; //else print msg
+    }
+}
+</script>
+</body>
+</html>
