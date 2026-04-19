@@ -1,8 +1,8 @@
 
 
 body {
-    background:#1F1F1F; 
-    color: white;
+    background:#f8f5f5; 
+    color: #262626;
     margin: 0;
     padding: 0;
 }
@@ -17,14 +17,27 @@ button { /*button styling*/
     margin: 5px;
     border-radius: 6px;
     cursor: pointer;
-    background-color: #7F00FF;
+    background-color: #7a3b3b;
     color: white;
     font-size: 16px;
     transition: 0.3s; /*transition time*/
 }
 
+
 button:hover {
-    background-color: #962EFF;
+    background-color: #fceed1;
+}
+
+#loginMsg{
+	position:center;
+	color:red;
+	text-align: center;
+}
+
+#registerMsg{
+	position:center;
+	color:red;
+	text-align: center;
 }
 
 input, select { /*styling for input/select*/
@@ -38,23 +51,7 @@ input, select { /*styling for input/select*/
     margin-right: auto;
 }
 
-nav {
-    background: #7F00FF;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
 
-nav a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-nav a:hover {
-    color: #3B0075;
-}
 
 section { /*space  above and below*/
     margin: 20px auto;
@@ -65,6 +62,71 @@ section { /*space  above and below*/
     max-width: 400px;
     max-height: 400px;
     margin-top: 20px; 
-    border: 2px solid #646cff;
+    border: 2px solid #7a3b3b;
     border-radius: 10px;
+}
+
+.btn-group .btn {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+
+.btn-outline-primary {
+    background: #7a3b3b !important; 
+	color: #f8f5f5 !important;
+	border-color: transparent !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: #af8989 !important;
+    border-color: transparent !important;
+}
+
+.nav-link {
+    color: #262626;
+}
+
+
+.nav-link:hover {
+    text-decoration: underline;
+    color: #575757;
+}
+
+
+.navbar-brand{
+	color:#7a3b3b;
+}
+
+.bg-body-tertiary {
+    background-color: #f8f5f5 !important;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.card-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card .btn.btn-primary {
+    background-color: #7a3b3b;
+    border-color: #7a3b3b;
+	padding-left: 40px;
+    padding-right: 40px;
+}
+
+.card .btn.btn-primary:hover {
+    background-color: #af8989;
+    border-color: #af8989;
+}
+
+.nav-link.active{
+	text-decoration: underline;
 }

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">
+      <img src="images/logo.png" alt="Logo" height="100">
+    </a>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+	  
+        <li class="nav-item">
+          <a class="nav-link" href="wm.html">Watermark</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="compare.html">Image comparison</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="images.html">Images</a>
+        </li>
+		    <li class="nav-item">
+          <a class="nav-link" href="#">Scan Images</a>
+        </li>
+		    <li class="nav-item">
+          <a class="nav-link" onclick="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<section>
+    <h2>Compare Image</h2>
+    <!-- <select id="method">
+        <option value="ORB">ORB</option>
+        <option value="SIFT">SIFT</option>
+    </select> -->
+</section>
+
+<section>
+    <h3>Upload Image</h3>
+    <input type="file" id="img1"/>
+    <input type="file" id="img2"/>
+</section>
+
+<section>
+    <h2>Preview</h2> 
+    <img id="preview1" src="" accept="image/*">
+    <img id="preview2" src="" accept="image/*">
+</section>
+
+<div class="center">
+    <button class="btn btn-outline-primary" onClick="getScore()">Get Score</button>
+</div>
+<p class="text-center" id="score"></p>
+
+<section>
+    <h2>Results</h2>
+    <div id="results"></div>
+</section>
+
+
+
+
+
+<script>
+const token = localStorage.getItem("token");
+if(!token) window.location.href="login.html";
+
+document.getElementById("img1").addEventListener("change", (e)=>uploadCompareImage(e.target.files[0], true));
+document.getElementById("img2").addEventListener("change", (e)=>uploadCompareImage(e.target.files[0], false));
+
+async function uploadCompareImage(file, isFirst){ //upload either slot 1 or slot 2
+    if(!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(`http://localhost:5000/upload-to_compare?first_img=${isFirst}`, {
+        method:"POST",
+        body: formData,
+          headers:{
+            "Authorization":"Bearer "+token
+        }
+    });
+
+    const data = await res.json();
+    if(data.error){
+        document.getElementById("score").innerText = data.error;
+        return;
+    }
+    //local preview from the selected file
+    const previewId = isFirst ? "preview1" : "preview2";
+    document.getElementById(previewId).src = URL.createObjectURL(file);
+}
+
+async function getScore(){ //run all 4 comparison methods
+    const res = await fetch("http://localhost:5000/compare",{
+        method:"POST",
+        headers:{
+            "Authorization":"Bearer "+token
+        }
+    });
+
+    const data = await res.json();
+    if(data.error){
+        document.getElementById("score").innerText = data.error;
+        return;
+    }
+
+    document.getElementById("score").innerText = "";
+    const container = document.getElementById("results");
+    container.innerHTML = "";
+
+    //render each method's result
+    for(const [name, result] of Object.entries(data)){
+        const div = document.createElement("div");
+        div.className = "result-block";
+
+        if(result.error){
+            div.innerHTML = `<h4>${name}</h4><p>${result.error}</p>`;
+        } else {
+            const imgUrl = result.image_url.startsWith("http")
+                ? result.image_url
+                : `http://localhost:5000${result.image_url.startsWith("/") ? "" : "/"}${result.image_url}`;
+            div.innerHTML = `
+                <h4>${name}</h4>
+                <p>Similarity: ${result.score.toFixed(2)}% = ${result.match ? "Match" : "No match"}</p>
+                <img src="${imgUrl}" alt="${name}">
+            `;
+        }
+        container.appendChild(div);
+    }
+}
+
+function logout(){
+    localStorage.removeItem("token");
+    window.location.href="login.html";
+}
+</script>

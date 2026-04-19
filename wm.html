@@ -3,17 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <title>Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
 <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
 
-<nav>
-    <a href="#">Add watermark</a>
-    <a href="#">Compare images</a>
-	<a href="#">Scan & Notifications</a>
-	<a href="#">Change settings</a>
-    <a href="#" onclick="logout()">Logout</a>
+
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">
+      <img src="images/logo.png" alt="Logo" height="100">
+    </a>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+	  
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="wm.html">Watermark</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="compare.html">Image comparison</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="images.html">Images</a>
+        </li>
+		<li class="nav-item">
+          <a class="nav-link" href="#">Scan Images</a>
+        </li>
+		<li class="nav-item">
+          <a class="nav-link" onclick="logout()">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
+
 
 <section>
     <h2>Upload Image</h2>
@@ -30,18 +58,26 @@
     </select>
 </section>
 
-<section>
-    <button onclick="encodeImage()">Encode</button> 
-    <button onclick="decodeImage()">Decode</button>
-    <button onclick="downloadImage()">Download</button>
-    <p id="message"></p>
-    <p id="decodedMessage"></p> 
-</section>
+
+<div class="center">
+	<div class="btn-group" role="group">
+	    <button class="btn btn-outline-primary" onclick="encodeImage()">Encode</button>
+        <button class="btn btn-outline-primary" onclick="decodeImage()">Decode</button>
+        <button class="btn btn-outline-primary" onclick="downloadImage()">Download</button>
+	</div>
+	<br>
+</div>
+
+<p class="text-center" id="message"></p>
+<p class="text-center" id="decodedMessage"></p> 
+
 
 <section>
     <h2>Preview</h2> <!--image returns image after upload and displays imag -->
-    <img id="preview" src="">
+    <img id="preview" src="" accept="image/*">
 </section>
+
+
 
 <script>
 const token = localStorage.getItem("token");
@@ -58,7 +94,10 @@ document.getElementById("fileInput").addEventListener("change", async (e)=>{ //l
 	
     const res = await fetch("http://localhost:5000/upload-image", {
         method:"POST",
-        body: formData
+        body: formData,
+         headers:{
+            "Authorization":"Bearer "+token
+        },
     });
 	
     const data = await res.json(); //returns hashed file
