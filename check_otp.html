@@ -39,44 +39,44 @@
 
 <div class="card-center">
 	<div class="card">
-		<h1>Login</h1>
-		<form class="px-5 py-3" onsubmit="event.preventDefault(); loginUser();">
+		<h1>Enter code</h1>
+		<form class="px-5 py-3" onsubmit="event.preventDefault(); checkOtp();">
 		<div class="mb-3">
-		  <label for="exampleDropdownFormEmail1" class="form-label">Email address</label>
-		  <input type="email" class="form-control" id="email" placeholder="email@example.com">
+		  <label for="otp" class="form-label">Please enter your 6-digit code.</label>
+		  <input type="text" class="form-control" id="otp" placeholder="XXX XXX" maxlength="6">
 		</div>
-		<div class="mb-3">
-		  <label for="exampleDropdownFormPassword1" class="form-label">Password</label>
-		  <input type="password" class="form-control" id="password" placeholder="Password">
-		</div>
-		<button type="submit" class="btn btn-primary"> Sign in</button>
-    <hr>
-    <p>Click here to register an account</p>
-    <button type="button" class="btn btn-primary" onclick="location.href='register.html'">Register</button>
-		<p id="loginMsg"></p>
-		</form>
+		<button type="submit" class="btn btn-primary">Submit</button>
+        <p id=""otpMsg></p>
+        </form>
 	</div>
 </div>
 
 
 <script>
-async function loginUser() {
+async function checkOtp() {
 
-    const email = document.getElementById("email").value; //get values
-    const password = document.getElementById("password").value;
+    const email = localStorage.getItem("pendingEmail");
+    const code = document.getElementById("otp").value;
+
+    if(!email){
+        document.getElementById("otpMsg").innerText = "Please login first";
+        window.location.href = "login.html";
+        return;
+    }
 	
-    const res = await fetch("http://localhost:5000/login", { //send POST request to endpoint
+    const res = await fetch("http://localhost:5000/check_otp", { //send POST request to endpoint
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({email, password})
+        body: JSON.stringify({email, code})
     });
     const data = await res.json();
 	
     if(res.status===200){ //if 200
-        localStorage.setItem("pendingEmail", email); //store jwt
-        window.location.href="check_otp.html";
+        localStorage.setItem("token", data.token); //store jwt
+        localStorage.removeItem("pendingEmail")
+        window.location.href="wm.html";
     } else {
-        document.getElementById("loginMsg").innerText = data.message; //else print msg
+        document.getElementById("otpMsg").innerText = data.message; //else print msg
     }
 }
 </script>

@@ -32,7 +32,7 @@
           <a class="nav-link active" aria-current="page" href="images.html">Images</a>
         </li>
 		<li class="nav-item">
-          <a class="nav-link" href="#">Scan Images</a>
+          <a class="nav-link" href="scan.html">Scan Images</a>
         </li>
 		<li class="nav-item">
           <a class="nav-link" onclick="logout()">Logout</a>
@@ -50,7 +50,11 @@
 
 <p class="text-center" id="message"></p>
 
-<hr>
+<section>
+  <h2>Scan Images</h2>
+  <p>Reverse search to see if your has been reposted online / similar art style. One scan every 30 days.</p>
+  <button id="scanBtn" class="btn btn-primary">Scan</button>
+</section>
 
 
 <section>
@@ -86,6 +90,22 @@ document.getElementById("fileInput").addEventListener("change", async (e)=>{ //l
 });
 
 
+document.getElementById("scanBtn").addEventListener("click", async()=>{
+  const res = await fetch("http://localhost:5000/scan",{
+    method:"POST",
+    headers:{
+      "Authorization" : "Bearer "+token},
+  });
+  const data = await res.json();
+
+  if (res.ok){
+    alert(data.message);
+  }else{
+    alert((data.error || "scan failed"))
+  }
+})
+
+
 async function loadImages(){
 
   const res = await fetch("http://localhost:5000/user-images",{
@@ -102,7 +122,7 @@ async function loadImages(){
       const div = document.createElement("div");
 
       div.innerHTML = `
-      <img src="http://localhost:5000${img.path}">
+      <img src="${img.url}">
       <br>
       <button onclick="deleteImage(${img.id})"> Delete </button> 
       `;
