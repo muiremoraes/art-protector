@@ -34,8 +34,13 @@
 		<li class="nav-item">
           <a class="nav-link" href="scan.html">Scan Images</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="fgsm.html">Art Protection</a>
+        </li>
 		<li class="nav-item">
           <a class="nav-link" onclick="logout()">Logout</a>
+        </li>
+        <li class="nav-item" id="adminNav">
         </li>
       </ul>
     </div>
@@ -172,6 +177,21 @@ function logout(){
     localStorage.removeItem("token");
     window.location.href="login.html";
 }
+
+
+async function showAdminLink(){
+    const res = await fetch("http://localhost:5000/check-perms",{
+        headers:{
+            "Authorization":"Bearer "+token
+        },
+    });
+    const data = await res.json();
+
+    if(data.is_admin){
+        document.getElementById("adminNav").innerHTML=`<a class="nav-link" href="admin.html">Admin</a>`
+    }
+}
+showAdminLink();
 </script>
 
 </body>
