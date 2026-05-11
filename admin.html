@@ -1,112 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="style.css">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
 
 
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">
-      <img src="images/logo.png" alt="Logo" height="100">
-    </a>
-    
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-	  
-        <li class="nav-item">
-          <a class="nav-link" href="wm.html">Watermark</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="compare.html">Image comparison</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="images.html">Images</a>
-        </li>
-		<li class="nav-item">
-          <a class="nav-link" href="scan.html">Scan Images</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="fgsm.html">Art Protection</a>
-        </li>
-		<li class="nav-item">
-          <a class="nav-link" onclick="logout()">Logout</a>
-        </li>
-        <li class="nav-item" id="adminNav">
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="images/logo.png" alt="Logo" height="100">
+            </a>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="wm.html">Watermark</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="compare.html">Image comparison</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="images.html">Images</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="scan.html">Scan Results</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="fgsm.html">Art Protection</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="logout()">Logout</a>
+                    </li>
+                    <li class="nav-item" id="adminNav">
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
 
-<section>
-    <h2>Users</h2>
-    <p id="message"></p>
-    <div id="users"></div>
-</section>
+    <section>
+        <h2>Users</h2>
+        <p id="message"></p>
+        <div id="users"></div>
+    </section>
 
 
 
-<script>
-const token = localStorage.getItem("token");
-if(!token) window.location.href="login.html";
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) window.location.href = "login.html";
 
-async function loadUsers() {
-    const res = await fetch("http://localhost:5000/admin/users",{
-        headers:{
-            "Authorization":"Bearer "+token
-        },
-    });
-
-
-    if(res.status === 403){
-        document.getElementById("message").textContent ="Must be admin";
-        return;
-    }
-
-    const users = await res.json();
-    const div = document.getElementById("users");
-    div.innerHTML="";
-
-    users.forEach(u => {
-        const userDiv = document.createElement("div");
-        userDiv.innerHTML=
-        `<p>${u.username} - ${u.email} - Images:[${u.num_images}] - Admin:${u.is_admin}</p>`;
-        div.appendChild(userDiv)
-    });
-}
+        async function loadUsers() {
+            const res = await fetch("http://localhost:5000/admin/users", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+            });
 
 
-async function showAdminLink(){
-    const res = await fetch("http://localhost:5000/check-perms",{
-        headers:{
-            "Authorization":"Bearer "+token
-        },
-    });
-    const data = await res.json();
+            if (res.status === 403) {
+                document.getElementById("message").textContent = "Must be admin";
+                return;
+            }
 
-    if(data.is_admin){
-        document.getElementById("adminNav").innerHTML=`<a class="nav-link active" aria-current="page" href="admin.html">Admin</a>`
-    }
-}
+            const users = await res.json();
+            const div = document.getElementById("users");
+            div.innerHTML = "";
 
-function logout(){
-    localStorage.removeItem("token");
-    window.location.href="login.html";
-}
-showAdminLink();
-loadUsers();
+            users.forEach(u => {
+                const userDiv = document.createElement("div");
+                userDiv.innerHTML =
+                    `<p>${u.username} - ${u.email} - Images:[${u.num_images}] - Admin:${u.is_admin}</p>`;
+                div.appendChild(userDiv)
+            });
+        }
 
-</script>
+
+        async function showAdminLink() {
+            const res = await fetch("http://localhost:5000/check-perms", {
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+            });
+            const data = await res.json();
+            if (res.status === 413 || res.status === 429) {
+                alert(data.message);
+                return;
+            }
+            if (data.is_admin) {
+                document.getElementById("adminNav").innerHTML = `<a class="nav-link active" aria-current="page" href="admin.html">Admin</a>`
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+        showAdminLink();
+        loadUsers();
+
+    </script>
 
 </body>
+
 </html>

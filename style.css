@@ -40,6 +40,10 @@ button:hover {
 	text-align: center;
 }
 
+#otpMsg{
+	color:red;
+}
+
 input, select { /*styling for input/select*/
     padding: 8px;
     margin: 5px;
@@ -65,6 +69,39 @@ section { /*space  above and below*/
     border: 2px solid #7a3b3b;
     border-radius: 10px;
 }
+
+#preview-fgsm {
+    border: 2px solid #7a3b3b;
+    border-radius: 4px;
+}
+
+#preview1, #preview2{
+    max-width: 300px;
+    max-height: 300px;
+    margin:10px;
+    padding-right: 0%;
+    padding-left: 0%;
+    border: 2px solid #7a3b3b;
+    border-radius:4px;
+}
+
+
+.result-block img {
+    max-width: 600px;
+    max-height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid #7a3b3b;
+    border-radius:4px;
+}
+
+.image-lib{
+    max-width: 100%;
+    max-height: 300px;
+    border: 2px solid #7a3b3b;
+    border-radius:4px;
+}
+
 
 .btn-group .btn {
     padding-left: 30px;
@@ -108,6 +145,10 @@ section { /*space  above and below*/
     align-items: center;
 }
 
+.card-img-top{
+    height: 300px;
+    object-fit: cover;
+}
 
 .card-center {
     display: flex;

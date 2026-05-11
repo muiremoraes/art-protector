@@ -1,86 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Register</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="style.css">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">
-      <img src="images/logo.png" alt="Logo" height="100">
-    </a>
-    
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-	  
-		<li class="nav-item">
-          <a class="nav-link" href="index.html">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="login.html">Login</a>
-        </li>
-        <li class="nav-item">
-		  <a class="nav-link active" aria-current="page">Register</a>
-        </li>
-      </ul>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+        <img src="images/logo.png" alt="Logo" height="100">
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="login.html">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page">Register</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="card-center">
+    <div class="card">
+      <h1>Register</h1>
+      <form class="px-5 py-3" onsubmit="event.preventDefault(); registerUser();">
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" class="form-control" id="username" placeholder="Username">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email" placeholder="email@example.com">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="Password">
+        </div>
+        <p id="registerMsg"></p>
+        <button type="submit" class="btn btn-primary">Register</button>
+        <hr>
+        <p>Click here to login</p>
+        <button type="button" class="btn btn-primary" onclick="location.href='login.html'">Login</button>
+
+      </form>
     </div>
   </div>
-</nav>
 
-<div class="card-center">
-	<div class="card">
-		<h1>Register</h1>
-		<form class="px-5 py-3" onsubmit="event.preventDefault(); registerUser();">
-		
-		<div class="mb-3">
-		  <label class="form-label">Username</label>
-		  <input type="text" class="form-control" id="username" placeholder="Username">
-		</div>
-		
-		<div class="mb-3">
-		  <label class="form-label">Email address</label>
-		  <input type="email" class="form-control" id="email" placeholder="email@example.com">
-		</div>
-		<div class="mb-3">
-		  <label class="form-label">Password</label>
-		  <input type="password" class="form-control" id="password" placeholder="Password">
-		</div>
-		<button type="submit" class="btn btn-primary">Register</button>
-    <hr>
-    <p>Click here to login</p>
-		<button type="button" class="btn btn-primary" onclick="location.href='login.html'">Login</button>
-		<p id="registerMsg"></p>
-		</form>
-	</div>
-</div>
+  <script>
+    async function registerUser() {
+      const username = document.getElementById("username").value; //get values
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-<script>
-async function registerUser() {
-    const username = document.getElementById("username").value; //get values
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-	
-    const res = await fetch("http://localhost:5000/register", { //send post request 
+      const res = await fetch("http://localhost:5000/register", { //send post request 
         method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({username,email,password})
-    });
-	
-    const data = await res.json(); //send as json
-	
-    if(res.status===201){
-        window.location.href="login.html"; //redirect to login or print message
-    } else {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+      });
+
+      const data = await res.json(); //send as json
+
+      if (res.status === 413 || res.status === 429) {
+        alert(data.message);
+        return;
+      }
+
+      if (res.status === 201) {
+        window.location.href = "login.html"; //redirect to login or print message
+      } else {
         document.getElementById("registerMsg").innerText = data.message;
+      }
     }
-}
-</script>
+    
+  </script>
 </body>
+
 </html>

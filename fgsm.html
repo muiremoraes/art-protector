@@ -1,152 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-<link rel="stylesheet" href="style.css">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
 
 
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">
-      <img src="images/logo.png" alt="Logo" height="100">
-    </a>
-    
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-	  
-        <li class="nav-item">
-          <a class="nav-link" href="wm.html">Watermark</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="compare.html">Image comparison</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="images.html">Images</a>
-        </li>
-		<li class="nav-item">
-          <a class="nav-link" href="scan.html">Scan Images</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="fgsm.html">Art Protection</a>
-        </li>
-		<li class="nav-item">
-          <a class="nav-link" onclick="logout()">Logout</a>
-        </li>
-      </ul>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+        <img src="images/logo.png" alt="Logo" height="100">
+      </a>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="wm.html">Watermark</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="compare.html">Image comparison</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="images.html">Images</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="scan.html">Scan Results</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="fgsm.html">Art Protection</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="logout()">Logout</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
 
-<section>
+  <section>
     <h2>Upload Image</h2>
-    <input type="file" id="fileInput" accept="image/*"> 
+    <input type="file" id="fileInput" accept="image/*">
+  </section>
 
 
-
-<div class="center">
-	<div class="btn-group" role="group">
-	    <button class="btn btn-outline-primary" onclick="addFGSM()">Add FGSM</button>
-        <button class="btn btn-outline-primary" onclick="downloadFGSM()" id="downloadFGSM">Download</button>
-	</div>
-	<br>
-</div>
-
-<p class="text-center" id="message"></p>
+  <div class="center">
+    <div class="btn-group" role="group">
+      <button class="btn btn-outline-primary" onclick="addFGSM()">Add FGSM</button>
+      <button class="btn btn-outline-primary" onclick="downloadFGSM()" id="downloadFGSM">Download</button>
+    </div>
+    <br>
+  </div>
 
 
+  <p class="text-center" id="message"></p>
 
-<section>
-    <h2>Preview</h2> 
-    <img id="preview" src="" accept="image/*">
-</section>
+  <div class="container">
+        <div class="alert alert-warning mx-4" role="alert">
+            FGSM perturbations have been tested agasint MobileNetV2 using ImageNet classifier and may not respond the same on other models.
+        </div>
+    </div>
 
-<section>
+
+  <section>
+    <h2>Preview</h2>
+    <img id="preview-fgsm" src="" accept="image/*">
+  </section>
+
+  <section>
     <h2>Scores</h2>
     <p>Before FGSM:<span id="og_guess"></span></p>
     <p>After FGSM:<span id="adv_guess"></span></p>
-</section>
+  </section>
 
 
 
-<script>
-const token = localStorage.getItem("token");
-if(!token) window.location.href="login.html"; 
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "login.html";
 
-let uploadedFile = null;
-let protectBase64 = null; 
+    let uploadedFile = null;
+    let protectBase64 = null;
 
-document.getElementById("fileInput").addEventListener("change", (e)=>{ 
-    uploadedFile = e.target.files[0];
-});
-
-async function addFGSM(){
-    if (!uploadedFile) {
-        document.getElementById("message").innerText = "Upload an image first"; return;
-    }
-    document.getElementById("message").innerText = "Please wait";
-
-    const formData = new FormData(); 
-    formData.append("file", uploadedFile);
-	
-    const res = await fetch("http://localhost:5000/add-fgsm", {
-        method:"POST",
-        body: formData,
-         headers:{
-            "Authorization":"Bearer "+token
-        },
+    document.getElementById("fileInput").addEventListener("change", (e) => {
+      uploadedFile = e.target.files[0];
     });
-    const data = await res.json(); 
 
-    if (!res.ok){
+    async function addFGSM() {
+      if (!uploadedFile) {
+        document.getElementById("message").innerText = "Upload an image first"; return;
+      }
+      document.getElementById("message").innerText = "Please wait";
+
+      const formData = new FormData();
+      formData.append("file", uploadedFile);
+
+      const res = await fetch("http://localhost:5000/add-fgsm", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Authorization": "Bearer " + token
+        },
+      });
+      const data = await res.json();
+      if (res.status === 413 || res.status === 429) {
+        alert(data.message);
+        return;
+      }
+
+      if (!res.ok) {
         document.getElementById("message").innerText = data.message || "Error";
         return;
+      }
+
+      protectBase64 = data.image_base64;
+
+      document.getElementById("og_guess").innerText = `${data.orignal.label} - ${data.orignal.confidence}%`;
+      document.getElementById("adv_guess").innerText = `${data["after FGSM"].label} - ${data["after FGSM"].confidence}%`;
+
+      document.getElementById("preview-fgsm").src = "data:image/png;base64," + protectBase64;
+
+      document.getElementById("downloadFGSM").disabled = false;
+      document.getElementById("message").innerText = "Click to download image";
+
     }
 
-    protectBase64 = data.image_base64;
 
-    document.getElementById("og_guess").innerText= `${data.orignal.label} - ${data.orignal.confidence}%`;
-    document.getElementById("adv_guess").innerText= `${data["after FGSM"].label} - ${data["after FGSM"].confidence}%`;
+    async function downloadFGSM() {
+      if (!protectBase64) { alert("Upload an image first"); return; }
 
-    document.getElementById("preview").src= "data:image/png;base64,"+protectBase64
+      const binary = atob(protectBase64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
 
-    document.getElementById("downloadFGSM").disabled=false;
-    document.getElementById("message").innerText = "Click to download image";
+      const blob = new Blob([bytes], { type: "image/png" });
 
-}
-	
-
-async function downloadFGSM(){ 
-    if(!protectBase64) {alert("Upload an image first"); return;}
-
-	const binary = atob(protectBase64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-    	
-    const blob = new Blob([bytes],{type:"image/png"});
-	
-    const url = window.URL.createObjectURL(blob); 
-    const link = document.createElement("a"); 
-    link.href = url;
-    link.download = "image.png";
-    link.click(); 
-    window.URL.revokeObjectURL(url); //clears temp link
-}
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "image.png";
+      link.click();
+      window.URL.revokeObjectURL(url); //clears temp link
+    }
 
 
-function logout(){
-    localStorage.removeItem("token");
-    window.location.href="login.html";
-}
-</script>
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+
+
+  </script>
 
 </body>
+
 </html>
